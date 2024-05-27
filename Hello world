@@ -1,0 +1,6 @@
+@ECHO OFF
+CLS
+
+ECHO Hello world !
+
+( ECHO. ) && ( ECHO Press any key to terminate ... ) && ( PAUSE > NUL ) && ( EXIT /B 0 )
