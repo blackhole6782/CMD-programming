@@ -1,0 +1,221 @@
+@ECHO OFF
+CLS
+
+::RESET
+SET "now="
+
+::TEST : no argument
+CALL:timestamp
+ECHO ARG ........:
+ECHO NOW ........: %now%
+
+::TEST : with argument
+SETLOCAL ENABLEDELAYEDEXPANSION
+
+FOR %%v IN ( compact date dateCompact time timeCompact alpha ) DO ( ( ECHO ARG ........: %%v ) && ( CALL:timestamp %%v ) && ( ECHO NOW ........: !now! ) )
+
+ENDLOCAL
+
+( ECHO. ) && ( ECHO Press any key to terminate ... ) && ( PAUSE > NUL ) && ( EXIT /B 0 )
+
+:: === Function : TIMESTAMP ========================================================================
+:: REV 2024 05 27 10 27 18 =========================================================================
+:timeStamp
+
+SETLOCAL ENABLEDELAYEDEXPANSION
+
+:: ---------------------------------------------------------------------------------------------------------------------------------
+GOTO skipClockReading
+::   SET timerName=%0
+::   SET day=%date:~0,2%
+::   SET month=%date:~3,2%
+::   SET year=%date:~6,4%
+::   SET hour=%time:~0,2%
+::   SET minute=%time:~3,2%
+::   SET second=%time:~6,2%
+::   SET millisecond=%time:~9,2%
+:skipClockReading
+
+:: ---------------------------------------------------------------------------------------------------------------------------------
+
+IF "%1"=="alpha"         GOTO:timestampAlpha
+
+IF "%hour%"==" 0" SET "hour=00"
+IF "%hour%"==" 1" SET "hour=01"
+IF "%hour%"==" 2" SET "hour=02"
+IF "%hour%"==" 3" SET "hour=03"
+IF "%hour%"==" 4" SET "hour=04"
+IF "%hour%"==" 5" SET "hour=05"
+IF "%hour%"==" 6" SET "hour=06"
+IF "%hour%"==" 7" SET "hour=07"
+IF "%hour%"==" 8" SET "hour=08"
+IF "%hour%"==" 9" SET "hour=09"
+
+:: ---------------------------------------------------------------------------------------------------------------------------------
+IF "%minute%"==" 0" SET "minute=00"
+IF "%minute%"==" 1" SET "minute=01"
+IF "%minute%"==" 2" SET "minute=02"
+IF "%minute%"==" 3" SET "minute=03"
+IF "%minute%"==" 4" SET "minute=04"
+IF "%minute%"==" 5" SET "minute=05"
+IF "%minute%"==" 6" SET "minute=06"
+IF "%minute%"==" 7" SET "minute=07"
+IF "%minute%"==" 8" SET "minute=08"
+IF "%minute%"==" 9" SET "minute=09"
+
+  FOR %%i IN (0 1 2 3 4 5 6 7 8 9) DO (IF "%%i"=="%day%"         SET "day=0%%i"          )
+  FOR %%i IN (0 1 2 3 4 5 6 7 8 9) DO (IF "%%i"=="%month%"       SET "month=0%%i"        )
+::FOR %%i IN (0 1 2 3 4 5 6 7 8 9) DO (IF "%%i"=="%hour%"        SET "hour=0%%i"         )
+::FOR %%i IN (0 1 2 3 4 5 6 7 8 9) DO (IF "%%i"=="%minute%"      SET "minute=0%%i"       )
+  FOR %%i IN (0 1 2 3 4 5 6 7 8 9) DO (IF "%%i"=="%second%"      SET "second=0%%i"       )
+  FOR %%i IN (0 1 2 3 4 5 6 7 8 9) DO (IF "%%i"=="%millisecond%" SET "millisecond=0%%i"  )
+
+IF "%1"==""              GOTO:timestampDefault
+IF "%1"=="compact"       GOTO:timestampCompact
+IF "%1"=="dateCompact"   GOTO:timestampDateCompact
+IF "%1"=="date"          GOTO:timestampDate
+IF "%1"=="time"          GOTO:timestampTime
+IF "%1"=="timeCompact"   GOTO:timestampTimeCompact
+
+ECHO [ERROR] [timestamp] [Unknown argument].
+( ECHO. ) && ( ECHO Press any key to terminate ... ) && ( PAUSE > NUL ) && ( EXIT /B 0 )
+
+:: Format Y M D HH MM SS MMM and spacer [ ] [ ] [ ]
+:timestampDefault
+ SET "dateSpacer= "
+ SET "dateTimeSpacer= "
+ SET "timeSpacer= "
+ SET "mydate=%year%%dateSpacer%%month%%dateSpacer%%day%"
+ SET "mytime=%hour%%timeSpacer%%minute%%timeSpacer%%second%%timeSpacer%%millisecond%"
+GOTO:timestampLastStep
+
+:: Format Y M D HH MM SS MMM and spacer [] [] []
+:timestampCompact
+ SET "dateSpacer="
+ SET "dateTimeSpacer="
+ SET "timeSpacer="
+ SET "mydate=%year%%dateSpacer%%month%%dateSpacer%%day%"
+ SET "mytime=%hour%%timeSpacer%%minute%%timeSpacer%%second%%timeSpacer%%millisecond%"
+GOTO:timestampLastStep
+
+:: Format Y M D and spacer [ ] [] []
+:timestampDate
+ SET "dateSpacer= "
+ SET "dateTimeSpacer="
+ SET "timeSpacer="
+ SET "mydate=%year%%dateSpacer%%month%%dateSpacer%%day%"
+ SET "mytime="
+GOTO:timestampLastStep
+
+:: Format Y M D and spacer [] [] []
+:timestampDateCompact
+ SET "dateSpacer="
+ SET "dateTimeSpacer="
+ SET "timeSpacer="
+ SET "mydate=%year%%dateSpacer%%month%%dateSpacer%%day%"
+ SET "mytime="
+GOTO:timestampLastStep
+
+:: Format HH MM SS MMM and spacer [] [] [ ]
+:timestampTime
+ SET "dateSpacer="
+ SET "dateTimeSpacer="
+ SET "timeSpacer= "
+ SET "mydate="
+ SET "mytime=%hour%%timeSpacer%%minute%%timeSpacer%%second%%timeSpacer%%millisecond%"
+GOTO:timestampLastStep
+
+:: Format HH MM SS MMM and spacer [] [] []
+:timestampTimeCompact
+ SET "dateSpacer="
+ SET "dateTimeSpacer="
+ SET "timeSpacer="
+ SET "mydate="
+ SET "mytime=%hour%%timeSpacer%%minute%%timeSpacer%%second%%timeSpacer%%millisecond%"
+GOTO:timestampLastStep
+
+:: Format alpha Y M D HH MM SS MMM and spacer [] [] []
+:timestampAlpha
+
+::ECHO DEBUG POINT start alpha
+ SET "dateSpacer="
+ SET "dateTimeSpacer="
+ SET "timeSpacer="
+
+::ECHO DEBUG POINT def array
+ SET char[1]=A
+ SET char[2]=B
+ SET char[3]=C
+ SET char[4]=D
+ SET char[5]=E
+ SET char[6]=F
+ SET char[7]=G
+ SET char[8]=H
+ SET char[9]=I
+ SET char[10]=J
+ SET char[11]=K
+ SET char[12]=L
+ SET char[13]=M
+ SET char[14]=N
+ SET char[15]=O
+ SET char[16]=P
+ SET char[17]=Q
+ SET char[18]=R
+ SET char[19]=S
+ SET char[20]=T
+ SET char[21]=U
+ SET char[22]=V
+ SET char[23]=X
+ SET char[24]=Y
+ SET char[25]=W
+ SET char[26]=Z
+
+:: ---------------------------------------------------------------------------------------------------------------------------------
+:: set year
+SET /A k=%year%
+SET /A k=k-2020
+SET year=!char[%k%]!
+
+:: ---------------------------------------------------------------------------------------------------------------------------------
+:: set month
+SET /A "k=1%month% %% 100"
+SET month=!char[%k%]!
+
+:: ---------------------------------------------------------------------------------------------------------------------------------
+:: set day
+SET /A "k=1%day% %% 100"
+IF %K% LSS 10 GOTO:endSettingDay
+SET/A k=k-9
+SET day=!char[%k%]!
+:endSettingDay
+
+:: ---------------------------------------------------------------------------------------------------------------------------------
+:: set hour
+
+IF "%hour%"==" 0" ( SET "hour=0" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 1" ( SET "hour=1" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 2" ( SET "hour=2" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 3" ( SET "hour=3" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 4" ( SET "hour=4" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 5" ( SET "hour=5" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 6" ( SET "hour=6" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 7" ( SET "hour=7" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 8" ( SET "hour=8" ) && ( GOTO endSettingHour )
+IF "%hour%"==" 9" ( SET "hour=9" ) && ( GOTO endSettingHour )
+
+
+SET /A "k=1%hour% %% 100"
+
+IF %k% LSS 10 ( SET "hour=%hour:~1,1%" ) && ( GOTO:endSettingHour )
+SET/A k=k-9
+SET hour=!char[%k%]!
+:endSettingHour
+
+:: ---------------------------------------------------------------------------------------------------------------------------------
+ SET "mydate=%year%%dateSpacer%%month%%dateSpacer%%day%"
+ SET "mytime=%hour%%timeSpacer%%minute%%timeSpacer%%second%%timeSpacer%%millisecond%"
+
+  :timestampLastStep
+  ( ENDLOCAL ) && ( SET "now=%mydate%%dateTimeSpacer%%mytime%" )
+GOTO:EOF
+
